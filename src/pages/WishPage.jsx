@@ -4,7 +4,7 @@ import FloatingPetals from '../components/FloatingPetals'
 import '../Extras.css'
 
 const BIRTH_MONTH = 10 // November (0-based)
-const BIRTH_DAY = 21
+const BIRTH_DAY = 22
 
 const getCountdown = () => {
     const now = new Date()

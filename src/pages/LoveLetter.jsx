@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { Link } from 'react-router'
 
 // local sparkle (no hotlinked images, so it can never break after deployment)
 const sparkleSrc = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -117,6 +118,7 @@ const LoveLetter = () => {
 
     return (
         <main className='munna bg-[#8b0000] h-screen w-full overflow-hidden'>
+            <Link className="love-letter-home" to="/">← Home</Link>
             <section className="munna cssletter z-10">
                 <div className={`envelope ${openEnvelope ? "active" : ""}`}>
                     <button

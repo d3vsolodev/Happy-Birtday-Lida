@@ -8,7 +8,7 @@ import decorate from "../assets/decorate.png";
 import decoFlower from "../assets/decorate_flower.png";
 import hat from "../assets/hat.png";
 import smileIcon from "../assets/smiley_icon.png";
-import lidaPhoto from "../assets/lida.jpg"; // <- replace src/assets/lida.jpg with her photo
+import lidaPhoto from "../assets/cutegirl.jpg";
 import BookCanvas from "../components/BookCanvas";
 import LoveNote from "../components/LoveNote";
 import FloatingPetals from "../components/FloatingPetals";

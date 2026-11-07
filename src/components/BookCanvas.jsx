@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import lidaPhoto from '../assets/lida.jpg'
+import lidaPhoto from '../assets/cutegirl.jpg'
 import { GiCrossMark } from 'react-icons/gi'
 
 const BookCanvas = ({ active, setActive }) => {

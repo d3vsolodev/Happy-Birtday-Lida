@@ -1,21 +1,48 @@
-import React, { useEffect, useRef } from 'react'
-import cutegirl from '../assets/cutegirl.jpg'
+import React, { useEffect, useRef, useState } from 'react'
+import lidaPhoto from '../assets/lida.jpg'
 import { GiCrossMark } from 'react-icons/gi'
 
 const BookCanvas = ({ active, setActive }) => {
 
     const dropdownRef = useRef(null)
-    const handleClickOutside = (event) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setActive(true)
-        }
+
+    // fit the book to any screen: phones show one page (375px), bigger screens show both (750px)
+    const calcScale = () => {
+        const w = window.innerWidth
+        const h = window.innerHeight
+        if (w < 760) return Math.min(0.95, (w - 16) / 375, (h - 56) / 500)
+        return Math.min(0.9, (w - 24) / 750, (h - 56) / 500)
     }
+    const [scale, setScale] = useState(calcScale)
+    const [open, setOpen] = useState(false)
+
     useEffect(() => {
+        const onResize = () => setScale(calcScale())
+        window.addEventListener('resize', onResize)
+        window.addEventListener('orientationchange', onResize)
+        return () => {
+            window.removeEventListener('resize', onResize)
+            window.removeEventListener('orientationchange', onResize)
+        }
+    }, [])
+
+    // the card opens by itself shortly after the overlay appears (works on touch too)
+    useEffect(() => {
+        if (active) return
+        const t = setTimeout(() => setOpen(true), 900)
+        return () => { clearTimeout(t); setOpen(false) }
+    }, [active])
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setActive(true)
+            }
+        }
         document.addEventListener("mousedown", handleClickOutside)
         return () => {
             document.removeEventListener("mousedown", handleClickOutside)
         }
-    }, [])
+    }, [setActive])
 
 
     return (
@@ -25,7 +52,7 @@ const BookCanvas = ({ active, setActive }) => {
                 <GiCrossMark className="text-white" />
             </div>
 
-            <div ref={dropdownRef} className={`boxMail-container duration-500 -translate-y-1/2 ${active ? 'top-0' : ' top-1/2'}`}>
+            <div ref={dropdownRef} style={{ '--bk-scale': scale }} className={`boxMail-container -translate-y-1/2 ${open ? 'is-open' : ''} ${active ? 'top-0' : ' top-1/2'}`}>
                 <div className="card1">
                     <div className="cover-text-wrapper">
                         <h4 className="username">
@@ -41,7 +68,7 @@ const BookCanvas = ({ active, setActive }) => {
 
                     {/* User Image remains the same */}
                     <div className="userImg">
-                        <img src={cutegirl} alt="Recipient's Photo" />
+                        <img src={lidaPhoto} alt="Recipient's Photo" />
                     </div>
 
                     {/* New Hello Kitty themed decoration */}

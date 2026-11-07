@@ -2,21 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/cakeFavicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/cakeFavicon.png" />
+    <link rel="apple-touch-icon" href="/cakeFavicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#ee9ca7" />
+    <meta name="description" content="A little world made with love by TH3AN, just for Lida. Happy Birthday!" />
     <meta property="og:title" content="Happy Birthday Lida" />
     <meta property="og:description" content="A little world made with love by TH3AN, just for Lida" />
     <meta property="og:type" content="website" />
 
     <!-- For Twitter too -->
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Happy Birthday Lida" />
     <meta name="twitter:description" content="A little world made with love by TH3AN, just for Lida" />
+
+    <!-- Fonts: one non-blocking request instead of chained @imports -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Coiny&family=Dancing+Script:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nerko+One&family=Nunito:wght@400;600;700&family=Quicksand:wght@500;700&family=Sriracha&family=Titan+One&display=swap"
+    />
     <title>Happy Birthday Lida 🌸</title>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>Please enable JavaScript to open Lida's birthday surprise 🎂</noscript>
     <script type="module" src="/src/main.jsx"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
   </body>
 </html>

@@ -4,15 +4,19 @@ import React, { useMemo } from 'react'
 const FloatingPetals = ({ count = 20 }) => {
     const petals = useMemo(
         () =>
-            Array.from({ length: count }).map((_, i) => ({
-                id: i,
-                left: Math.random() * 100,
-                size: 10 + Math.random() * 14,
-                dur: 9 + Math.random() * 9,
-                delay: -Math.random() * 18,
-                drift: -60 + Math.random() * 120,
-                hue: Math.random() > 0.5 ? 'a' : 'b',
-            })),
+            Array.from({ length: count }).map((_, i) => {
+                // deterministic "random" values so rendering stays pure
+                const r = (n) => ((i * 9301 + n * 49297) % 233280) / 233280
+                return {
+                    id: i,
+                    left: r(1) * 100,
+                    size: 10 + r(2) * 14,
+                    dur: 9 + r(3) * 9,
+                    delay: -r(4) * 18,
+                    drift: -60 + r(5) * 120,
+                    hue: r(6) > 0.5 ? 'a' : 'b',
+                }
+            }),
         [count]
     )
 

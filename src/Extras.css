@@ -159,78 +159,46 @@
 }
 .wish-input:focus { border-color: #ff7882; box-shadow: 0 0 0 4px rgba(255, 120, 130, .2); }
 
-/* ===== Home extras ===== */
-.home-extras { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 14px; z-index: 2; position: relative; }
-.home-extras a {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: "Sriracha", cursive; font-size: 15px;
-    padding: 5px 16px; border-radius: 999px; border: 3px solid #333; background: #fff; color: #333; text-decoration: none;
-    transition: background-color .25s ease, color .25s ease, border-color .25s ease, transform .25s ease, box-shadow .25s ease;
-}
-.home-extras a:hover { background: #FF7882; color: #fff; border-color: #FF7882; transform: translateY(-2px); box-shadow: rgba(0, 0, 0, .24) 0 3px 8px; }
-.home-days-chip {
-    display: inline-block; margin-top: 10px; padding: 3px 14px; border-radius: 999px;
-    background: #fff; border: 2px solid #ffb3c9; color: #d6477a; font-family: "Sriracha", cursive; font-size: 14px;
-    position: relative; z-index: 2;
-}
-.box__account .image { transition: transform .2s ease-out; transform-style: preserve-3d; }
+/* iPhone Safari: use the dynamic viewport so nothing hides behind the address bar */
+main.h-screen { height: 100vh; height: 100dvh; }
 
-/* Stagger the home shortcuts without delaying visibility of their container. */
-.home-extras a {
-    animation: extrasIn .55s cubic-bezier(.2, .8, .2, 1) both;
+main.h-screen { position: relative; }
+
+.drag-hint {
+    position: fixed;
+    left: 50%;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    z-index: 9000;
+    padding: 6px 18px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .92);
+    color: #8b0000;
+    font-family: "Nunito", sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    white-space: nowrap;
+    pointer-events: none;
+    animation: hintIn .6s 1.2s backwards, hintOut .6s 7s forwards;
 }
-.home-extras a:nth-child(2) { animation-delay: .14s; }
-@keyframes extrasIn {
-    from { opacity: 0; transform: translateY(10px) scale(.97); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes hintIn { from { opacity: 0; transform: translate(-50%, 16px); } }
+@keyframes hintOut { to { opacity: 0; visibility: hidden; } }
+
+/* ===== real 3D stage (three.js) ===== */
+.stage3d {
+    position: relative;
+    z-index: 2;
+    width: min(560px, 100%);
+    height: clamp(290px, 48vh, 500px);
+    cursor: grab;
+    border-radius: 24px;
 }
+.stage3d:active { cursor: grabbing; }
+.stage3d canvas { outline: none; touch-action: none; }
+.stage3d-fallback { height: 100%; display: grid; place-items: center; font-size: 130px; animation: bitFloat 4s ease-in-out infinite; }
 
-@media (max-width: 658px) {
-    .home-extras {
-        width: min(100%, 440px);
-        flex-direction: row;
-        align-items: stretch;
-        gap: 10px;
-        margin-top: 16px;
-    }
+.page-loading { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; font-size: 64px; background: #fff1f5; animation: heartBeat 1.2s infinite; }
 
-    .home-extras a {
-        flex: 1 1 0;
-        min-width: 0;
-        min-height: 48px;
-        justify-content: center;
-        padding: 8px 10px;
-        border: 1px solid #eadbd7;
-        border-radius: 14px;
-        background: rgba(255, 255, 255, .92);
-        color: #47515c;
-        font-family: "Inter", sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        text-align: center;
-        box-shadow: 0 5px 14px rgba(79, 45, 54, .06);
-    }
-
-    .home-extras a:focus-visible {
-        outline: 3px solid rgba(185, 79, 102, .35);
-        outline-offset: 3px;
-    }
-}
-
-@media (max-width: 360px) {
-    .home-extras {
-        flex-direction: column;
-    }
-
-    .home-extras a {
-        flex: auto;
-        width: 100%;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .home-extras a {
-        animation: none;
-        transition: none;
-    }
-}
+.wish-trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.wish-error { margin-top: 8px; font-size: 14px; font-weight: 700; color: #c2255c; }
+.extra-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 #333; }

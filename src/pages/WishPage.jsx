@@ -1,81 +1,73 @@
-import React, { useMemo, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Link } from 'react-router'
+import ThreeCanvas from '../three/ThreeCanvas'
+import { buildCake } from '../three/buildCake'
 import FloatingPetals from '../components/FloatingPetals'
+import { SITE, daysUntilBirthday } from '../config'
+import { sendWish } from '../lib/sendWish'
 import '../Extras.css'
 
-const BIRTH_MONTH = 10 // November (0-based)
-const BIRTH_DAY = 22
-
-const getCountdown = () => {
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    let next = new Date(now.getFullYear(), BIRTH_MONTH, BIRTH_DAY)
-    if (next < today) next = new Date(now.getFullYear() + 1, BIRTH_MONTH, BIRTH_DAY)
-    return Math.round((next - today) / 86400000)
-}
+const buildLidaCake = (ctx) => buildCake(ctx, { name: SITE.name })
+const MAX_WISH = 300
 
 const WishPage = () => {
+    const cakeRef = useRef(null)
     const [blown, setBlown] = useState(false)
     const [wish, setWish] = useState('')
-    const [sent, setSent] = useState(false)
-    const [tilt, setTilt] = useState({ x: 14, y: -8 })
-    const days = useMemo(getCountdown, [])
+    const [trap, setTrap] = useState('') // hidden anti-bot field
+    const [status, setStatus] = useState('idle') // idle | sending | sent | error
+    const [days] = useState(daysUntilBirthday)
+
+    const confetti = (o) =>
+        window.confetti?.({
+            origin: { y: 0.65 },
+            colors: ['#ff6f9c', '#ffd1de', '#ffffff', '#ffc83d', '#b9a2ff'],
+            ...o,
+        })
 
     const blow = () => {
         if (blown) return
+        cakeRef.current?.blowOut()
         setBlown(true)
-        const fire = (o) =>
-            window.confetti?.({
-                origin: { y: 0.65 },
-                colors: ['#ff6f9c', '#ffd1de', '#ffffff', '#ffc83d', '#b9a2ff'],
-                ...o,
-            })
-        fire({ particleCount: 120, spread: 90 })
-        setTimeout(() => fire({ particleCount: 80, spread: 120, scalar: 1.2 }), 350)
+        confetti({ particleCount: 120, spread: 90 })
+        setTimeout(() => confetti({ particleCount: 80, spread: 120, scalar: 1.2 }), 350)
     }
 
     const relight = () => {
+        cakeRef.current?.relight()
         setBlown(false)
-        setSent(false)
+        setStatus('idle')
         setWish('')
     }
 
-    const onMove = (e) => {
-        const r = e.currentTarget.getBoundingClientRect()
-        const px = (e.clientX - r.left) / r.width - 0.5
-        const py = (e.clientY - r.top) / r.height - 0.5
-        setTilt({ x: 14 - py * 16, y: px * 28 })
+    const submit = async () => {
+        const text = wish.trim()
+        if (!text || status === 'sending') return
+        setStatus('sending')
+        const ok = await sendWish(text, trap)
+        setStatus(ok ? 'sent' : 'error')
+        if (ok) confetti({ particleCount: 60, spread: 60, origin: { y: 0.8 }, shapes: ['star'], colors: ['#ffd76a', '#fff'] })
     }
 
     return (
         <main className="extra-page wish-page">
-            <FloatingPetals count={18} />
+            <FloatingPetals count={14} />
 
             <header className="extra-head">
                 <span className="extra-kicker">
-                    {days === 0 ? '🎉 Today is your day!' : `${days} day${days === 1 ? '' : 's'} until 21 November`}
+                    {days === 0 ? '🎉 Today is your day!' : `${days} day${days === 1 ? '' : 's'} until ${SITE.birthdayLabel}`}
                 </span>
-                <h1 className="extra-title">Make a Wish, Lida</h1>
+                <h1 className="extra-title">Make a Wish, {SITE.name}</h1>
             </header>
 
-            <div className="cake-stage" onMouseMove={onMove} onMouseLeave={() => setTilt({ x: 14, y: -8 })}>
-                <div className="bd-cake" style={{ transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)` }} onClick={blow}>
-                    <div className="candles">
-                        {[0, 1, 2, 3, 4].map((i) => (
-                            <div key={i} className="candle" style={{ '--i': i }}>
-                                <span className={`flame ${blown ? 'out' : ''}`} />
-                                <span className={`smoke ${blown ? 'show' : ''}`} />
-                                <span className="wax" />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="tier tier-top"><i className="drip" /></div>
-                    <div className="tier tier-mid"><i className="drip" /></div>
-                    <div className="tier tier-bot"><i className="drip" /></div>
-                    <div className="plate" />
-                    <span className="cake-heart">♡</span>
-                </div>
-            </div>
+            <ThreeCanvas
+                className="stage3d"
+                label="A 3D birthday cake you can turn around"
+                build={buildLidaCake}
+                onReady={(api) => { cakeRef.current = api }}
+                fallback={<div className="stage3d-fallback">🎂</div>}
+            />
+            <p className="extra-hint">Drag to turn the cake 360° · pinch or scroll to zoom</p>
 
             {!blown ? (
                 <div className="extra-actions">
@@ -84,35 +76,47 @@ const WishPage = () => {
                 </div>
             ) : (
                 <div className="wish-panel">
-                    {!sent ? (
+                    {status !== 'sent' ? (
                         <>
                             <p className="wish-title">Close your eyes and make a wish ✨</p>
-                            <p className="wish-sub">Type it here. It goes straight to the stars and nowhere else.</p>
+                            <p className="wish-sub">
+                                Type your wish and send it. {SITE.sender} will receive it 💌
+                            </p>
                             <div className="wish-row">
                                 <input
                                     className="wish-input"
                                     value={wish}
                                     onChange={(e) => setWish(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && submit()}
                                     placeholder="I wish..."
-                                    maxLength={120}
+                                    maxLength={MAX_WISH}
+                                    aria-label="Your wish"
+                                    disabled={status === 'sending'}
                                 />
-                                <button
-                                    className="extra-btn"
-                                    onClick={() => {
-                                        setSent(true)
-                                        window.confetti?.({ particleCount: 60, spread: 60, origin: { y: 0.8 }, shapes: ['star'], colors: ['#ffd76a', '#fff'] })
-                                    }}
-                                >
-                                    Send ⭐
+                                {/* honeypot: real people never see or fill this */}
+                                <input
+                                    className="wish-trap"
+                                    tabIndex={-1}
+                                    autoComplete="off"
+                                    aria-hidden="true"
+                                    value={trap}
+                                    onChange={(e) => setTrap(e.target.value)}
+                                    name="website"
+                                />
+                                <button className="extra-btn" onClick={submit} disabled={!wish.trim() || status === 'sending'}>
+                                    {status === 'sending' ? 'Sending…' : 'Send ⭐'}
                                 </button>
                             </div>
+                            {status === 'error' && (
+                                <p className="wish-error">The stars are busy right now. Please try sending again 💗</p>
+                            )}
                         </>
                     ) : (
                         <>
-                            <p className="wish-title">Your wish is on its way to the stars ⭐</p>
+                            <p className="wish-title">Your wish is on its way ⭐</p>
                             <p className="wish-sub">
-                                And here is mine for you: lots of fun, good health, and a love that
-                                stays right beside you. May it all come true. 💗 — TH3AN
+                                {SITE.sender} got your wish, and here is his wish for you: lots of fun, good
+                                health, and a love that stays right beside you. 💗
                             </p>
                         </>
                     )}

@@ -1,210 +1,154 @@
-import React, { useEffect, useState } from "react";
-import png from '../assets/1.png'
-import ballon1 from '../assets/balloon1.png'
-import ballon2 from '../assets/balloon2.png'
-import decorate from '../assets/decorate.png'
-import decoFlowers from '../assets/decorate_flower.png'
-import hat from '../assets/hat.png'
-import smileIcon from '../assets/smiley_icon.png'
+import React, { useState } from "react";
 import { Link } from "react-router";
+import { FaHeart, FaEnvelopeOpenText } from "react-icons/fa";
+import flagImg from "../assets/1.png";
+import balloon1 from "../assets/balloon1.png";
+import balloon2 from "../assets/balloon2.png";
+import decorate from "../assets/decorate.png";
+import decoFlower from "../assets/decorate_flower.png";
+import hat from "../assets/hat.png";
+import smileIcon from "../assets/smiley_icon.png";
+import lidaPhoto from "../assets/lida.jpg"; // <- replace src/assets/lida.jpg with her photo
 import BookCanvas from "../components/BookCanvas";
-import SmallLetter from "../components/SmallLetter";
-import cutegirl from '../assets/cutegirl.jpg'   
+import LoveNote from "../components/LoveNote";
 import FloatingPetals from "../components/FloatingPetals";
+import { SITE } from "../config";
+import "../Home.css";
+
+// Splits a word into animated letters
+const Letters = ({ text, start }) =>
+    text.split("").map((c, i) => (
+        <span key={i} style={{ "--d": `${start + i * 0.07}s` }}>{c}</span>
+    ));
+
+const STARS = [
+    { top: "13%", left: "5%", s: 18, d: 2.6 },
+    { top: "9%", left: "90%", s: 15, d: 2.8 },
+    { top: "44%", left: "3%", s: 14, d: 3.0 },
+    { top: "55%", left: "94%", s: 18, d: 3.2 },
+    { top: "78%", left: "7%", s: 16, d: 3.4 },
+    { top: "88%", left: "88%", s: 14, d: 3.6 },
+];
+const FLOWERS = [
+    { top: "30%", left: "93%", d: 3.0 },
+    { top: "64%", left: "4%", d: 3.2 },
+    { top: "93%", left: "48%", d: 3.4 },
+];
 
 const Home = () => {
-    // ------------------- Hooks 
-    const [Active, SetActive] = useState(true)
+    const [Active, SetActive] = useState(true);
 
-    useEffect(() => {
-        let datetxt = "22 Nov";
-        let charArrDate = datetxt.split('');
-        let currentIndex = 0;
-        let date__of__birth = document.querySelector(".date__of__birth span");
-        let typedText = "";
-
-        let timeDatetxt;
-        const startDelay = window.matchMedia("(max-width: 658px)").matches ? 500 : 12000;
-        const startTimer = setTimeout(function () {
-            timeDatetxt = setInterval(function () {
-                if (currentIndex < charArrDate.length) {
-                    typedText += charArrDate[currentIndex];
-                    date__of__birth.textContent = typedText; // set fresh each time
-                    currentIndex++;
-                } else {
-                    clearInterval(timeDatetxt);
-                    if (!date__of__birth.classList.contains("svg-added")) {
-                        let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                        svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                        svg.setAttribute("width", "24");
-                        svg.setAttribute("height", "24");
-                        svg.setAttribute("viewBox", "0 0 24 24");
-                        svg.innerHTML = `<path fill="#a31414" d="M18.483 16.767A8.5 8.5 0 0 1 8.118 7.081a1 1 0 0 1-.113.097c-.28.213-.63.292-1.33.45l-.635.144c-2.46.557-3.69.835-3.983 1.776c-.292.94.546 1.921 2.223 3.882l.434.507c.476.557.715.836.822 1.18c.107.345.071.717-.001 1.46l-.066.677c-.253 2.617-.38 3.925.386 4.506s1.918.052 4.22-1.009l.597-.274c.654-.302.981-.452 1.328-.452s.674.15 1.329.452l.595.274c2.303 1.06 3.455 1.59 4.22 1.01c.767-.582.64-1.89.387-4.507z"/> <path fill="#a31414" d="m9.153 5.408l-.328.588c-.36.646-.54.969-.82 1.182q.06-.045.113-.097a8.5 8.5 0 0 0 10.366 9.686l-.02-.19c-.071-.743-.107-1.115 0-1.46c.107-.344.345-.623.822-1.18l.434-.507c1.677-1.96 2.515-2.941 2.222-3.882c-.292-.941-1.522-1.22-3.982-1.776l-.636-.144c-.699-.158-1.049-.237-1.33-.45c-.28-.213-.46-.536-.82-1.182l-.327-.588C13.58 3.136 12.947 2 12 2s-1.58 1.136-2.847 3.408" opacity="0.5"/>`;
-                        let container = document.querySelector(".date__of__birth");
-                        container.prepend(svg);
-                        container.appendChild(svg.cloneNode(true));
-                        date__of__birth.classList.add("svg-added");
-                    }
-                }
-            }, 100);
-        }, startDelay);
-
-        return () => {
-            clearTimeout(startTimer);
-            clearInterval(timeDatetxt);
-        };
-    }, []);
-
+    // 3D tilt on the photo - mouse only, so touch scrolling is never blocked
+    const tilt = (e) => {
+        if (e.pointerType !== "mouse") return;
+        const r = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        e.currentTarget.style.transform = `perspective(600px) rotateY(${x * 22}deg) rotateX(${-y * 22}deg) scale(1.04)`;
+    };
+    const untilt = (e) => { e.currentTarget.style.transform = ""; };
 
     return (
-        <>
-            <div id="wrapper">
-                <FloatingPetals count={14} />
-                <div className="flag__birthday">
-                    <img src={png} alt="" width="350" className="flag__left" />
-                    <img src={png} alt="" width="350" className="flag__right" />
-                </div>
+        <div id="wrapper">
+            <FloatingPetals count={12} />
 
-                <div className="content">
-                    <div className="left">
-                        <div className="title">
-                            <h1 className="happy">
-                                <span style={{ "--t": "4s" }}>H</span>
-                                <span style={{ "--t": "4.2s" }}>a</span>
-                                <span style={{ "--t": "4.4s" }}>p</span>
-                                <span style={{ "--t": "4.6s" }}>p</span>
-                                <span style={{ "--t": "4.8s" }}>y</span>
-                            </h1>
-                            <h1 className="birthday">
-                                <span style={{ "--t": "5s" }}>B</span>
-                                <span style={{ "--t": "5.2s" }}>i</span>
-                                <span style={{ "--t": "5.4s" }}>r</span>
-                                <span style={{ "--t": "5.6s" }}>t</span>
-                                <span style={{ "--t": "5.8s" }}>h</span>
-                                <span style={{ "--t": "6s" }}>d</span>
-                                <span style={{ "--t": "6.2s" }}>a</span>
-                                <span style={{ "--t": "6.4s" }}>y</span>
-                            </h1>
-                            <div className="hat">
-                                <img src={hat} alt="" width="130" />
-                            </div>
-                        </div>
-
-                        <div className="date__of__birth">
-                            <span></span>
-                        </div>
-
-                        <div className="btn flex md:gap-2 md:flex-row flex-col">
-                            <button onClick={() => SetActive(!Active)} id="btn__letter">
-                                <div className="mail flex items-center justify-center gap-2 md:text-[1rem] text-sm">
-                                    <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-                                        <path fill="#d13852" d="M63.841 18.646c-.246-3.85-1.072-6.977-3.752-10.198c-5.369-6.439-17.71-7.511-23.23-1.312c-.963.912-1.872 2.01-2.785 3.322l-2.066 2.969l-2.067-2.969c-.916-1.312-1.827-2.411-2.79-3.322C21.627.937 9.287 2.008 3.921 8.448C1.237 11.669.412 14.796.166 18.646C-.184 30.092 8.122 39.257 9.147 40.6c5.637 6.613 11.786 12.866 18.03 18.627c1.13.989 2.106 1.812 3.082 2.628c.587.479 1.166.964 1.749 1.44c.582-.477 1.159-.961 1.743-1.44c.98-.816 1.956-1.639 3.082-2.628c6.247-5.761 12.397-12.01 18.04-18.627c1.025-1.343 9.332-10.508 8.979-21.954" />
-                                        <path fill="#f1a5b1" d="M60.39 16.604a10.1 10.1 0 0 0-.457-2.909a9 9 0 0 0-1.169-2.42c-2.973-4.369-9.451-5.943-14.863-4.837c-2.111.508-4.225 1.302-5.197 3.318c-.331.865.365 1.281 1.44 1.228c3.894-.435 8.202-.043 11.645 1.63c.858.42 1.661.918 2.395 1.503c2.47 1.913 3.537 4.887 4.02 7.837c1.201-.242 1.854-1.683 2.01-2.965a10.5 10.5 0 0 0 .177-2.385" />
-                                    </svg>
-                                    Open Lida's Card
-                                </div>
-                            </button>
-                            <div id="FromTH3AN">
-                                <Link to={'/love-letter'} className="flex items-center gap-2 md:text-[1rem] text-sm">
-                                    <svg className='w-7 h-7' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">
-                                        <path fill="#fff" d="M65.086 55.5H6.878A2.877 2.877 0 0 1 4 52.623V17.248A2.25 2.25 0 0 1 6.248 15h59.446A2.306 2.306 0 0 1 68 17.306v35.28a2.914 2.914 0 0 1-2.914 2.914" />
-                                        <path fill="#ea5a47" d="M47.064 33.552A5.885 5.885 0 0 0 36 30.755a5.885 5.885 0 0 0-11.064 2.797c0 1.398.49 2.68 1.304 3.69l-.002.002L36 49.342l9.762-12.098l-.003-.002a5.86 5.86 0 0 0 1.305-3.69" />
-                                        <g fill="none" stroke="#000" strokeMiterlimit="10" strokeWidth="2">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M65.086 55.5H6.878A2.877 2.877 0 0 1 4 52.623V17.248A2.25 2.25 0 0 1 6.248 15h59.446A2.306 2.306 0 0 1 68 17.306v35.28a2.914 2.914 0 0 1-2.914 2.914" />
-                                            <path strokeLinecap="round" d="m5 16l15 16m47-16L52 32" />
-                                            <path strokeLinejoin="round" d="M47.064 33.552A5.885 5.885 0 0 0 36 30.755a5.885 5.885 0 0 0-11.064 2.797c0 1.398.49 2.68 1.304 3.69l-.002.002L36 49.342l9.762-12.098l-.003-.002a5.86 5.86 0 0 0 1.305-3.69z" />
-                                        </g>
-                                    </svg>
-                                    From TH3AN
-                                </Link>
-                            </div>
-                            <div className="home-extras">
-                                <Link to="/flower">🌷 Your Flower</Link>
-                                <Link to="/wish">🎂 Make a Wish</Link>
-                            </div>
-                        </div>
-
-                        
-                    </div>
-
-                    <div className="right">
-                        <div className="box__account">
-                            <div
-                                className="image"
-                                onMouseMove={(e) => {
-                                    const r = e.currentTarget.getBoundingClientRect()
-                                    const x = (e.clientX - r.left) / r.width - 0.5
-                                    const y = (e.clientY - r.top) / r.height - 0.5
-                                    e.currentTarget.style.transform = `perspective(500px) rotateY(${x * 24}deg) rotateX(${-y * 24}deg) scale(1.05)`
-                                }}
-                                onMouseLeave={(e) => { e.currentTarget.style.transform = '' }}
-                            >
-                                <img src={cutegirl} alt="Lida" />
-                            </div>
-                            <div className="name">
-                                <i className="fa-solid fa-heart"></i>
-                                <span>Dear Lida</span>
-                                <i className="fa-solid fa-heart"></i>
-                            </div>
-                            <div className="balloon_one">
-                                <img width="100px" src={ballon1} alt="" />
-                            </div>
-                            <div className="balloon_two">
-                                <img width="100px" src={ballon2} alt="" />
-                            </div>
-                        </div>
-
-                        <div className="cricle">
-                            <div className="text__cricle">
-                                {["h", "a", "p", "p", "y", "-", "b", "i", "r", "t", "h", "d", "a", "y", "-"].map(
-                                    (char, i) => (
-                                        <span key={i} style={{ "--i": i + 1 }}>
-                                            {char}
-                                        </span>
-                                    )
-                                )}
-                            </div>
-                            <i className="fa-solid fa-heart"></i>
-                        </div>
-                    </div>
-                </div>
-
-                {[1, 2, 3, 4, 5].map((n, i) => (
-                    <div key={i} className={`decorate_star star${n}`} style={{ "--t": `${15 + i * 0.2}s` }}></div>
-                ))}
-
-                <div className="decorate_flower--one" style={{ "--t": "15s" }}>
-                    <img width="20" src={decoFlowers} alt="" />
-                </div>
-                <div className="decorate_flower--two" style={{ "--t": "15.3s" }}>
-                    <img width="20" src={decoFlowers} alt="" />
-                </div>
-                <div className="decorate_flower--three" style={{ "--t": "15.6s" }}>
-                    <img width="20" src={decoFlowers} alt="" />
-                </div>
-
-                <div className="decorate_bottom">
-                    <img src={decorate} alt="" width="100" />
-                </div>
-
-                <div className="smiley__icon">
-                    <img src={smileIcon} alt="" width="100" />
-                </div>
-
-
-
-
-
-
-                {/* =========================== BoxMail Canvas =============================== */}
-                <BookCanvas active={Active} setActive={SetActive} />
-
-                {/* ========================== Small letter from rajib ========================= */}
-                <section className="smallLetter relative md:absolute md:-bottom-26 md:left-[45%] md:-translate-x-1/2" style={{ "--t": "15.6s" }}>
-                    <SmallLetter />
-                </section>
+            <div className="flags" aria-hidden="true">
+                <img className="flag-l" src={flagImg} alt="" />
+                <img className="flag-r" src={flagImg} alt="" />
             </div>
-        </>
+
+            {STARS.map((st, i) => (
+                <div key={i} className="deco deco--star" style={{ top: st.top, left: st.left, "--s": `${st.s}px`, "--d": `${st.d}s` }} />
+            ))}
+            {FLOWERS.map((f, i) => (
+                <div key={i} className="deco deco--flower" style={{ top: f.top, left: f.left, "--d": `${f.d}s` }}>
+                    <img src={decoFlower} alt="" />
+                </div>
+            ))}
+            <div className="deco deco--smile"><img src={smileIcon} alt="" /></div>
+            <div className="deco deco--blob"><img src={decorate} alt="" /></div>
+
+            <main className="content">
+                {/* ---------------- left: text + buttons ---------------- */}
+                <section className="left">
+                    <div className="title">
+                        <h1 className="happy"><Letters text="Happy" start={1.0} /></h1>
+                        <h1 className="birthday"><Letters text="Birthday" start={1.35} /></h1>
+                        <div className="hat"><img src={hat} alt="" /></div>
+                    </div>
+
+                    <div className="date-pill" style={{ marginTop: "clamp(1rem, 3vh, 1.8rem)" }}>
+                        <i>★</i><span>{SITE.birthdayLabel}</span><i>★</i>
+                    </div>
+
+                    <div className="cta" style={{ marginTop: "clamp(1rem, 3vh, 1.8rem)" }}>
+                        <div className="home-actions">
+                            <button
+                                id="btn__letter"
+                                className="pill pill--primary reveal"
+                                style={{ "--d": "2.3s" }}
+                                onClick={() => SetActive(!Active)}
+                            >
+                                <FaHeart color="#d13852" /> Open Lida's Card
+                            </button>
+                            <Link
+                                id="FromTH3AN"
+                                className="pill pill--primary reveal"
+                                style={{ "--d": "2.45s" }}
+                                to="/love-letter"
+                            >
+                                <FaEnvelopeOpenText color="#fff" /> From TH3AN
+                            </Link>
+                        </div>
+
+                        <div className="home-extras">
+                            <Link to="/flower" className="pill" style={{ "--d": "2.7s" }}>
+                                <span className="emoji">🌷</span> Your Flower
+                            </Link>
+                            <Link to="/wish" className="pill" style={{ "--d": "2.9s" }}>
+                                <span className="emoji">🎂</span> Make a Wish
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+
+                {/* ---------------- right: her photo ---------------- */}
+                <section className="right">
+                    <div className="photo-wrap">
+                        <div className="balloon balloon--a"><img src={balloon1} alt="" /></div>
+                        <div className="balloon balloon--b"><img src={balloon2} alt="" /></div>
+
+                        <div className="float">
+                            <div className="photo" onPointerMove={tilt} onPointerLeave={untilt}>
+                                <img src={lidaPhoto} alt="Lida" />
+                            </div>
+
+                            <div className="name-badge">
+                                <b>♥</b><span>Dear Lida</span><b>♥</b>
+                            </div>
+
+                            <div className="spin-badge" aria-hidden="true">
+                                <div className="spin-ring">
+                                    {["h", "a", "p", "p", "y", "-", "b", "i", "r", "t", "h", "d", "a", "y", "-"].map((c, i) => (
+                                        <span key={i} style={{ "--i": i + 1 }}>{c}</span>
+                                    ))}
+                                </div>
+                                <div className="spin-heart">♥</div>
+                            </div>
+
+                            <span className="bit bit--1">♥</span>
+                            <span className="bit bit--2">✦</span>
+                            <span className="bit bit--3">✿</span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <LoveNote />
+
+            {/* Card book (opens from "Open Lida's Card") */}
+            <BookCanvas active={Active} setActive={SetActive} />
+        </div>
     );
 };
 

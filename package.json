@@ -1,13 +1,14 @@
 {
-  "name": "birthday-wish",
+  "name": "happy-birthday-lida",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:api": "node scripts/test-wish-api.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
@@ -16,7 +17,8 @@
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
     "react-router": "^7.9.5",
-    "tailwindcss": "^4.1.17"
+    "tailwindcss": "^4.1.17",
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -28,5 +30,9 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "vite": "^7.2.2"
+  },
+  "description": "Birthday website for Lida, built by TH3AN",
+  "engines": {
+    "node": ">=18"
   }
 }

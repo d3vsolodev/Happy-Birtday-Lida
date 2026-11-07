@@ -1,33 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react'; // 👈 Import useRef
+import React from 'react'
 import '../HeartTransition.css';
 import { useLocation } from 'react-router';
 
-const HeartTransition = ({ children }) => {
+const HeartTransition = () => {
     const location = useLocation();
-    const [loading, setLoading] = useState(true);
-    const isInitialMount = useRef(true); 
 
-    useEffect(() => {
-        if (isInitialMount.current) {
-            isInitialMount.current = false; 
-            const minTime = new Promise(res => setTimeout(res, 100));
-            Promise.all([minTime]).then(() => setLoading(false));
+    // The very first page load is handled by the cake opening animation,
+    // so the heart only plays when moving between pages.
+    if (location.key === 'default') return null;
 
-            return;
-        }
-
-        setLoading(true);
-        const minTime = new Promise(res => setTimeout(res, 7000));
-        const loadDone = new Promise(res => window.requestIdleCallback(res, { timeout: 2000 }));
-
-        Promise.all([minTime, loadDone]).then(() => setLoading(false));
-    }, [location.pathname]);
-
-
+    // `key` restarts the CSS animation on every navigation (works on iPhone Safari too)
     return (
-        <>
-            {loading && (
-                <div className="route-loader">
+                <div className="route-loader" key={location.key}>
                     <main className='bg-[#8b0000] HeartTransisitonOpen'>
                         <svg className="heart-loader" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 90 90" version="1.1">
                             <g className="heart-loader__group">
@@ -40,12 +24,6 @@ const HeartTransition = ({ children }) => {
                     </main>
 
                 </div>
-            )}
-
-            <div style={{ opacity: loading ? 0.3 : 1, transition: "opacity 0.3s ease" }}>
-                {children}
-            </div>
-        </>
     )
 }
 

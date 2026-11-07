@@ -592,3 +592,13 @@
         background-repeat: no-repeat;
     }
 }
+/* iPhone Safari: 100vh includes the address bar, so use the dynamic viewport height */
+main.loader-wrapper {
+    height: 100vh;
+    height: 100dvh;
+}
+
+/* short landscape phones: scale the cake scene down so the title is never cut off */
+@media (max-height: 520px) {
+    #CakeWrapper { transform: scale(.62); transform-origin: 50% 40%; }
+}

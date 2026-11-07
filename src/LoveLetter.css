@@ -16,42 +16,6 @@
     --heart-text: white;
 }
 
-.love-letter-page {
-    position: relative;
-    min-height: 100vh;
-    min-height: 100svh;
-}
-
-.love-letter-home {
-    position: fixed;
-    top: max(16px, env(safe-area-inset-top));
-    left: max(16px, env(safe-area-inset-left));
-    z-index: 20;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 44px;
-    padding: 8px 14px;
-    border: 1px solid rgba(255, 255, 255, .55);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, .94);
-    color: #8b0000;
-    font: 700 14px/1.2 "Inter", sans-serif;
-    text-decoration: none;
-    box-shadow: 0 4px 16px rgba(45, 0, 0, .2);
-    -webkit-tap-highlight-color: transparent;
-}
-
-.love-letter-home span {
-    font-size: 20px;
-    line-height: 1;
-}
-
-.love-letter-home:focus-visible {
-    outline: 3px solid #ffc0cb;
-    outline-offset: 3px;
-}
-
 @media (min-width: 650px) {
     :root {
         --envelope-x: 600px;
@@ -478,19 +442,6 @@
 }
 
 @media screen and (max-width: 658px) {
-    .love-letter-home {
-        top: max(12px, env(safe-area-inset-top));
-        left: max(12px, env(safe-area-inset-left));
-        min-height: 42px;
-        padding: 8px 12px;
-        font-size: 13px;
-    }
-
-    .cssletter {
-        min-height: 100vh;
-        min-height: 100svh;
-    }
-
     .envelope::before {
         content: "˚ʚ❤︎ɞ˚";
         font-size: 50px;

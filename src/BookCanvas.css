@@ -34,12 +34,12 @@
     perspective: 2000px;
 }
 
-.boxMail .boxMail-container:hover {
+.boxMail .boxMail-container:is(:hover, .is-open) {
     transform: rotate(-5deg);
     filter: drop-shadow(0 0 10px #FF7882);
 }
 
-.boxMail .boxMail-container:hover .card1 {
+.boxMail .boxMail-container:is(:hover, .is-open) .card1 {
     transform: translate(-187px, -250px) rotateY(-140deg);
 }
 
@@ -220,7 +220,7 @@
 }
 
 /* Hover effect: make the decorations slightly fade when the book is open/hovered */
-.boxMail .boxMail-container:hover .card1 .deco-shape {
+.boxMail .boxMail-container:is(:hover, .is-open) .card1 .deco-shape {
     opacity: 0.5;
 }
 
@@ -348,7 +348,7 @@
 }
 
 /* Hover effect on the inner Pink Box to float it */
-.boxMail .boxMail-container:hover .card2-content {
+.boxMail .boxMail-container:is(:hover, .is-open) .card2-content {
     /* Slightly less movement but higher shadow lift */
     transform: translate(12px, 12px);
     /* Deep, soft shadow for a clear floating effect */
@@ -482,12 +482,12 @@
         perspective: 2000px;
     }
 
-    .boxMail .boxMail-container:hover {
+    .boxMail .boxMail-container:is(:hover, .is-open) {
         transform: rotate(-5deg);
         filter: drop-shadow(0 0 10px #FF7882);
     }
 
-    .boxMail .boxMail-container:hover .card1 {
+    .boxMail .boxMail-container:is(:hover, .is-open) .card1 {
         transform: translate(-160px, -250px) rotateY(-140deg);
     }
 
@@ -607,5 +607,41 @@
     }
     .boxMail .boxMail-container .card2 h3.card2-recipient {
         font-size: 28px;
+    }
+}
+
+
+/* =====================================================
+   Responsive card book (all phones, tablets, desktops)
+   - opens by itself (class .is-open) so it works on touch
+   - scale is set from JS so it always fits the screen
+   ===================================================== */
+.boxMail .boxMail-container {
+    width: 750px;
+    height: 500px;
+    transform: none;
+    scale: var(--bk-scale, .9);
+    transition: transform .6s ease, filter .6s ease;
+}
+.boxMail .boxMail-container:is(:hover, .is-open) {
+    transform: rotate(-4deg);
+}
+.boxMail .boxMail-container:is(:hover, .is-open) .card1 {
+    transform: translate(-187px, -250px) rotateY(-140deg);
+}
+
+/* phones in portrait: show only the message page, centered and readable */
+@media screen and (max-width: 759.98px) {
+    .boxMail .boxMail-container:is(:hover, .is-open) {
+        transform: none;
+    }
+    .boxMail .boxMail-container:is(:hover, .is-open) .card1 {
+        opacity: 0;
+        transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity .5s .55s;
+        pointer-events: none;
+    }
+    .boxMail .crossAll {
+        top: max(8px, env(safe-area-inset-top));
+        right: 4px;
     }
 }

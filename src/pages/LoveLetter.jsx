@@ -1,7 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router'
+import React, { useRef, useState } from 'react'
 
-const LoveLetter = () => {      
+// local sparkle (no hotlinked images, so it can never break after deployment)
+const sparkleSrc = "data:image/svg+xml;utf8," + encodeURIComponent(
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='#ffd9e0' d='M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z'/></svg>"
+);
+
+
+const LoveLetter = () => {
     const lettersData = [
         {
             id: 1,
@@ -45,12 +50,9 @@ const LoveLetter = () => {
         },
     ];
     const [openEnvelope, setOpenEnvelope] = useState(false);
-    const [letters, setLetters] = useState([]);
-    const [zIndexCounter, setZIndexCounter] = useState(10);
+    const [letters, setLetters] = useState(lettersData);
+    const zRef = useRef(20);
     const lettersContainerRef = useRef(null);
-    useEffect(() => {
-        setLetters(lettersData);
-    }, []);
     // Drag logic
     const handleMouseDown = (e) => {
         const isTouch = e.type === "touchstart";
@@ -76,7 +78,7 @@ const LoveLetter = () => {
         letterEl.style.left = `${startLeft}px`;
         letterEl.style.top = `${startTop}px`;
         letterEl.style.margin = 0;
-        letterEl.style.zIndex = zIndexCounter;
+        letterEl.style.zIndex = ++zRef.current;
 
         const moveAt = (posX, posY) => {
             letterEl.style.left = `${posX - offsetX}px`;
@@ -114,10 +116,7 @@ const LoveLetter = () => {
 
 
     return (
-        <main className='munna love-letter-page bg-[#8b0000] h-screen w-full overflow-hidden'>
-            <Link className="love-letter-home" to="/" draggable="false">
-                <span aria-hidden="true">←</span> Back to birthday
-            </Link>
+        <main className='munna bg-[#8b0000] h-screen w-full overflow-hidden'>
             <section className="munna cssletter z-10">
                 <div className={`envelope ${openEnvelope ? "active" : ""}`}>
                     <button
@@ -141,6 +140,8 @@ const LoveLetter = () => {
                     </div>
                 </div>
 
+                {openEnvelope && <p className="drag-hint">Drag the letters out ✨</p>}
+
                 <div className="munna letters" ref={lettersContainerRef}>
                     {letters.map((letter) => (
                         <blockquote
@@ -150,9 +151,10 @@ const LoveLetter = () => {
                             tabIndex={0}
                             style={{
                                 position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
+                                top: window.innerWidth < 768 ? '53%' : '50%',
+                                left: window.innerWidth < 768 ? '50%' : '50%',
+                                transform: 'none',
+                                zIndex: openEnvelope ? 15 : 0,
                             }}
 
                             onMouseDown={(e) => handleMouseDown(e, letter.id)}
@@ -201,33 +203,33 @@ const LoveLetter = () => {
             {/* ------------------ Heart Falling  */}
             <div className="munna snowflakes z-0">
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />
+                    <img src={sparkleSrc} alt="" width="25" />
                 </div>
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />  </div>
+                    <img src={sparkleSrc} alt="" width="25" />  </div>
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />
+                    <img src={sparkleSrc} alt="" width="25" />
                 </div>
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />
+                    <img src={sparkleSrc} alt="" width="25" />
                 </div>
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />
+                    <img src={sparkleSrc} alt="" width="25" />
                 </div>
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />
+                    <img src={sparkleSrc} alt="" width="25" />
                 </div>
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />
+                    <img src={sparkleSrc} alt="" width="25" />
                 </div>
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />
+                    <img src={sparkleSrc} alt="" width="25" />
                 </div>
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />
+                    <img src={sparkleSrc} alt="" width="25" />
                 </div>
                 <div className="munna snowflake">
-                    <img src="https://i.pinimg.com/originals/96/c7/8b/96c78bc8ab873498b763798793d64f62.png" width="25" />
+                    <img src={sparkleSrc} alt="" width="25" />
                 </div>
             </div>
         </main>
